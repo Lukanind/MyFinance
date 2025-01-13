@@ -1,6 +1,7 @@
 package com.example.myfinance.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +21,7 @@ class CategoryViewModel(val database: MyDatabase) : ViewModel() {
 
     var newEntity: CategoryEntity? = null
     val newCategory = mutableStateOf("")
+    val currentId = mutableIntStateOf(0)
 
     fun insertItem() = viewModelScope.launch {
         val newItem = newEntity?.copy(

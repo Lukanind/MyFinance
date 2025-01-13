@@ -20,108 +20,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfinance.viewmodels.CategoryViewModel
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun CategoryDropdown(viewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.factory)) {
-//    val testCategories = listOf(
-//        CategoryEntity(id = 1, categoryName = "Продукты"),
-//        CategoryEntity(id = 2, categoryName = "Тест"),
-//        CategoryEntity(id = 3, categoryName = "Тест2")
-//    )
-//
-//    val categories by remember { mutableStateOf(testCategories) }
-//
-//
-//    //val categories by viewModel.allCategories.collectAsState(initial = emptyList())
-//    Log.d("CategoryDropdown", "Categories: ${categories.size}")
-//    Log.d("CategoryDropdown", "Loaded categories: $categories")
-//
-//
-//
-//    var expanded by remember {
-//        mutableStateOf(false)
-//    }
-//    var selectedCategory by remember {
-//        mutableStateOf<CategoryEntity?>(null)
-//    }
-//
-//    Log.d("CategoryDropdown", "Expanded: $expanded")
-//
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = 8.dp)
-//            .clickable {
-//                Log.d("CategoryDropdown", "Column clicked")
-//            },
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        ExposedDropdownMenuBox(
-//            expanded = expanded,
-//            onExpandedChange = {
-//                expanded = !expanded
-//                Log.d("CategoryDropdown", "Dropdown expanded: $expanded")
-//                Log.d("CategoryDropdown", "onExpandedChange triggered")
-//
-//            }
-//        ) {
-//            TextField(
-//                value = selectedCategory?.categoryName ?: "",
-//                onValueChange = { },
-//                readOnly = true,
-//                label = { Text("Выберите категорию") },
-//                trailingIcon = {
-//                    //Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-//                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-//                    Log.d("CategoryDropdown", "Expanded: $expanded")
-//                },
-//                modifier = Modifier
-//                    .clickable {
-//                    expanded = !expanded
-//                    Log.d("CategoryDropdown", "TextField clicked: Dropdown expanded: $expanded")
-//                }
-//                    .focusable(false)
-//            )
-//            ExposedDropdownMenu(
-//                expanded = expanded,
-//                onDismissRequest = { expanded = false }
-//            ) {
-//                if (categories.isEmpty()) {
-//                    DropdownMenuItem(
-//                        text = { Text("Нет доступных категорий") },
-//                        onClick = {},
-//                        enabled = false
-//                    )
-//                } else {
-//                    categories.forEach { category ->
-//                        DropdownMenuItem(
-//                            text = {
-//                                Text(category.categoryName)
-//                            },
-//                            onClick = {
-//                                selectedCategory = category
-//                                expanded = false
-//                                Log.d("CategoryDropdown", "Expanded: $expanded")
-//                            },
-//                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-
 @Composable
-fun CategoryDropdownMenu(viewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.factory)) {
+fun CategoryDropdownMenu(categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.factory)) {
     // Состояние для управления открытием/закрытием меню
     var expanded by remember { mutableStateOf(false) }
     // Состояние для выбранной категории
     var selectedCategory by remember { mutableStateOf("Выберите категорию") }
 
     // Получаем все категории из ViewModel
-    val categories by viewModel.allCategories.collectAsState(initial = emptyList())
+    val categories by categoryViewModel.allCategories.collectAsState(initial = emptyList())
 
     Column {
         // Отображаем выбранную категорию
@@ -145,6 +52,7 @@ fun CategoryDropdownMenu(viewModel: CategoryViewModel = viewModel(factory = Cate
                     onClick = {
                         selectedCategory = category.categoryName
                         //viewModel.newCategory.value = selectedCategory // Обновляем значение в ViewModel
+                        categoryViewModel.currentId.value = category.id
                         expanded = false
                     })
             }

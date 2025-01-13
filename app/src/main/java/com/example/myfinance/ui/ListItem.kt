@@ -18,12 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.myfinance.data.OperationEntity
+import com.example.myfinance.data.OperationWithCategory
 
 @Composable
 fun ListItem(
-    item: OperationEntity,
-    onClick: (OperationEntity) -> Unit,
-    onClickDelete: (OperationEntity) -> Unit
+    item: OperationWithCategory,
+    onClick: (OperationWithCategory) -> Unit,
+    onClickDelete: (OperationWithCategory) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -55,7 +56,7 @@ fun ListItem(
                     .padding(10.dp)
             )
             Text(
-                item.category,
+                item.categoryName,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)

@@ -36,9 +36,9 @@ fun MainScreen(
     mainViewModel: OperationViewModel = viewModel(factory = OperationViewModel.factory),
     navigationController: NavHostController,
 ) {
-    val itemsList = mainViewModel.itemsList.collectAsState(initial = emptyList())
+    //val itemsList = mainViewModel.itemsList.collectAsState(initial = emptyList())
 
-    //val operations = mainViewModel.operationsWithCategories.collectAsState(initial = emptyList())
+    val itemsList = mainViewModel.operationsWithCategories.collectAsState(initial = emptyList())
 
     Column(
         modifier = Modifier
@@ -79,12 +79,12 @@ fun MainScreen(
             items(itemsList.value.reversed()) { item ->
                 ListItem(
                     item, {
-                        mainViewModel.newEntity = it
-                        mainViewModel.newAmount.doubleValue = it.amount
-                        mainViewModel.newCategory.value = it.category
-                        mainViewModel.newDescription.value = it.description.toString()
+//                        mainViewModel.newEntity = it
+//                        mainViewModel.newAmount.doubleValue = it.amount
+//                        mainViewModel.newCategory.value = it.category
+//                        mainViewModel.newDescription.value = it.description.toString()
                         navigationController.navigate(//Screens.Add.screen +
-                                "edit/${it.id}")
+                                "edit/${it.operationId}")
                     },
                     {
                         mainViewModel.deleteItem(it)

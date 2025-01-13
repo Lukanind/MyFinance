@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         CategoryEntity::class,
         UserEntity::class
     ],
-    version = 2
+    version = 3
 )
 abstract class MyDatabase : RoomDatabase() {
     abstract val operationDao: OperationDao
@@ -29,6 +29,7 @@ abstract class MyDatabase : RoomDatabase() {
             )
                 //Возможно понадобится миграция
                 .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_2_3)
                 .build()
         }
     }
@@ -53,5 +54,31 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
                 'role' TEXT NOT NULL
             )
         """.trimIndent())
+    }
+}
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        // Создаем новую таблицу с нужной структурой
+        database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `operations_new` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `amount` REAL NOT NULL,
+                `categoryId` INTEGER NOT NULL,
+                `description` TEXT,
+                FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON DELETE CASCADE
+            )
+        """.trimIndent())
+
+        database.execSQL("""
+            INSERT INTO operations_new (amount, categoryId, description)
+            SELECT amount, 0 AS categoryId, description FROM operations
+        """.trimIndent())
+
+        // Удаляем старую таблицу
+        database.execSQL("DROP TABLE operations")
+
+        // Переименовываем новую таблицу в старую
+        database.execSQL("ALTER TABLE operations_new RENAME TO operations")
     }
 }

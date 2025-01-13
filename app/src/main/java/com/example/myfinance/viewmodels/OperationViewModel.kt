@@ -19,31 +19,39 @@ class OperationViewModel(val database: MyDatabase) : ViewModel() {
 
     val itemsList = database.operationDao.getAllOperations()
 
-    //val operationsWithCategories= database.operationDao.getOperationsWithCategories()
+    val operationsWithCategories = database.operationDao.getOperationsWithCategories()
 
     val newAmount = mutableDoubleStateOf(0.0)
+    //val newCategoryId = mutableStateOf(0)
     val newCategory = mutableStateOf("")
     val newDescription = mutableStateOf("")
     var newEntity: OperationEntity? = null
 
-    fun insertItem() = viewModelScope.launch {
+    fun insertItem(categoryViewModel: CategoryViewModel) = viewModelScope.launch {
         val newItem = newEntity?.copy(
             amount = newAmount.doubleValue,
-            category = newCategory.value,
+            categoryId = categoryViewModel.currentId.intValue,
             description = newDescription.value)
             ?: OperationEntity(
                 amount = newAmount.doubleValue,
-                category = newCategory.value,
+                categoryId = categoryViewModel.currentId.intValue,
                 description = newDescription.value)
         database.operationDao.addOperation(newItem)
         newEntity = null
         newAmount.doubleValue = 0.0
         newCategory.value = ""
         newDescription.value = ""
+        //newCategoryId.value = 0
     }
 
     fun deleteItem(item: OperationEntity) = viewModelScope.launch {
         database.operationDao.deleteOperation(item)
+    }
+
+    fun deleteItem(item: OperationWithCategory) = viewModelScope.launch {
+        database.operationDao.deleteOperation(
+            database.operationDao.getOperationById(item.operationId)
+        )
     }
 
     fun getItemById(id: Int, onResult: (OperationEntity) -> Unit) = viewModelScope.launch {
@@ -52,6 +60,12 @@ class OperationViewModel(val database: MyDatabase) : ViewModel() {
         }
         onResult(item)  // Возвращаем результат в главный поток
     }
+
+//    fun updateCategoryId() {
+//        viewModelScope.launch {
+//            database.operationDao.updateCategoryIdFromZeroToOne()
+//        }
+//    }
 
     companion object{
         val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory{

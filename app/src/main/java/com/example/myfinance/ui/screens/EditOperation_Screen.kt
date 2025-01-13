@@ -25,14 +25,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.myfinance.ui.CategoryDropdownMenu
 import com.example.myfinance.viewmodels.OperationViewModel
 import com.example.myfinance.viewmodels.TitleViewModel
 import com.example.myfinance.ui.theme.Purple40
+import com.example.myfinance.viewmodels.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditOperationScreen(
     mainViewModel: OperationViewModel = viewModel(factory = OperationViewModel.factory),
+    categoryViewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.factory),
     navigationController: NavHostController,
     titleViewModel: TitleViewModel,
     newId: Int? = null
@@ -49,7 +52,7 @@ fun EditOperationScreen(
             val newItem = item
             mainViewModel.newEntity = newItem
             mainViewModel.newAmount.doubleValue = newItem.amount
-            mainViewModel.newCategory.value = newItem.category
+            categoryViewModel.currentId.value = newItem.categoryId
             mainViewModel.newDescription.value = newItem.description.toString()
         }
         }
@@ -102,6 +105,7 @@ fun EditOperationScreen(
             ),
             singleLine = true
         )
+        CategoryDropdownMenu(categoryViewModel)
         //Spacer(modifier = Modifier.height(10.dp))
         TextField(
             value = mainViewModel.newDescription.value,
@@ -129,7 +133,7 @@ fun EditOperationScreen(
         ) {
             Button(
                 onClick = {
-                    mainViewModel.insertItem()
+                    mainViewModel.insertItem(categoryViewModel)
                     navigationController.popBackStack()
                 },
                 colors = ButtonDefaults.buttonColors(
