@@ -46,19 +46,6 @@ fun EditCategoryScreen(
         titleViewModel.title = "Редактор категорий"
     }
 
-//    if (newId != null) {
-//        // Выполняется только при изменении newId (1 раз, пока не сменим значение)
-//        LaunchedEffect(newId) {
-//            mainViewModel.getItemById(newId) { item ->
-//                val newItem = item
-//                mainViewModel.newEntity = newItem
-//                mainViewModel.newAmount.doubleValue = newItem.amount
-//                mainViewModel.newCategory.value = newItem.category
-//                mainViewModel.newDescription.value = newItem.description.toString()
-//            }
-//        }
-//    }
-
     val context = LocalContext.current.applicationContext
 
     Column(

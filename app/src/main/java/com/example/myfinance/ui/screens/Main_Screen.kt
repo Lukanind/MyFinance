@@ -19,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,17 +30,21 @@ import androidx.navigation.NavHostController
 import com.example.myfinance.viewmodels.OperationViewModel
 import com.example.myfinance.ui.ListItem
 import com.example.myfinance.ui.theme.Purple40
+import com.example.myfinance.viewmodels.TitleViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     mainViewModel: OperationViewModel = viewModel(factory = OperationViewModel.factory),
     navigationController: NavHostController,
+    titleViewModel: TitleViewModel
 ) {
     //val itemsList = mainViewModel.itemsList.collectAsState(initial = emptyList())
 
     val itemsList = mainViewModel.operationsWithCategories.collectAsState(initial = emptyList())
-
+    LaunchedEffect(Unit) {
+        titleViewModel.title = "Мои операции"
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

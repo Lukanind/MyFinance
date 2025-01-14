@@ -16,7 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfinance.viewmodels.CategoryViewModel
 
@@ -38,7 +40,8 @@ fun CategoryDropdownMenu(categoryViewModel: CategoryViewModel = viewModel(factor
                 .clickable { expanded = true }
                 .padding(16.dp)
                 .border(1.dp, Color.Gray)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            fontSize = 20.sp
         )
 
         // Выпадающее меню

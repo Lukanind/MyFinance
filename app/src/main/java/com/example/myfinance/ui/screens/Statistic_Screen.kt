@@ -11,6 +11,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,12 +24,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfinance.viewmodels.OperationViewModel
 import com.example.myfinance.ui.theme.MyFinanceTheme
 import com.example.myfinance.ui.theme.Purple40
+import com.example.myfinance.viewmodels.TitleViewModel
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Composable
 fun StatisticScreen (
-    mainViewModel: OperationViewModel = viewModel(factory = OperationViewModel.factory)
+    mainViewModel: OperationViewModel = viewModel(factory = OperationViewModel.factory),
+    titleViewModel: TitleViewModel
 ){
     val itemsList = mainViewModel.itemsList.collectAsState(initial = emptyList()).value
 
@@ -40,6 +43,10 @@ fun StatisticScreen (
 
     val income = positiveAmounts.sumOf { it.amount }
     val expenses = negativeAmounts.sumOf { it.amount }
+
+    LaunchedEffect(Unit) {
+        titleViewModel.title = "Статистика"
+    }
 
     Card(
             modifier = Modifier
@@ -157,12 +164,4 @@ fun StatisticScreen (
 
         }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Test_preview(){
-    MyFinanceTheme() {
-        StatisticScreen()
-    }
 }

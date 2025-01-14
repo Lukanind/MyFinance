@@ -6,4 +6,6 @@ sealed class Screens(val screen: String) {
     data object EditOperation: Screens("edit/{entityId}")
     data object Statistic: Screens("statistic")
     data object AddCategory: Screens("addCategory")
+    data object Register: Screens("reg")
+    data object Login: Screens("login")
 }

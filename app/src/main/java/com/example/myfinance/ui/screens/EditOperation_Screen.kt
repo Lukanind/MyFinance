@@ -86,25 +86,6 @@ fun EditOperationScreen(
             singleLine = true
         )
         //Spacer(modifier = Modifier.height(10.dp))
-        TextField(
-            value = mainViewModel.newCategory.value,
-            onValueChange = {
-                mainViewModel.newCategory.value = it
-            },
-            label = {
-                Text(text = "Категория...")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xffeeeeee),
-                unfocusedTextColor = Color(0xff888888),
-                focusedContainerColor = Color.White,
-                focusedTextColor = Color(0xff222222),
-            ),
-            singleLine = true
-        )
         CategoryDropdownMenu(categoryViewModel)
         //Spacer(modifier = Modifier.height(10.dp))
         TextField(
@@ -151,12 +132,6 @@ fun EditOperationScreen(
                 )
 
             }
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            titleViewModel.title = "Мои операции"
         }
     }
 }

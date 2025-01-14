@@ -13,10 +13,12 @@ import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.myfinance.ui.MyNavigationDrawer
+import com.example.myfinance.ui.screens.LoginScreen
+import com.example.myfinance.ui.screens.RegistrationScreen
 import com.example.myfinance.ui.theme.MyFinanceTheme
 import com.example.myfinance.viewmodels.OperationViewModel
 import com.example.myfinance.viewmodels.TitleViewModel
+import com.example.myfinance.viewmodels.UserViewModel
 
 class MainActivity : ComponentActivity() {
     val titleViewModel: TitleViewModel by viewModels()
@@ -35,8 +37,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
-
         enableEdgeToEdge()
         setContent {
             MyFinanceTheme {
@@ -47,7 +47,10 @@ class MainActivity : ComponentActivity() {
                     //modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyNavigationDrawer(titleViewModel)
+                    MyNavigation()
+                    //RegistrationScreen()
+                    //LoginScreen()
+                    //MyNavigationDrawer(titleViewModel)
                 }
             }
         }

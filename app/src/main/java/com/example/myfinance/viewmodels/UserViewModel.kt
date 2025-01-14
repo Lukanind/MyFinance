@@ -12,12 +12,31 @@ import kotlinx.coroutines.launch
 
 class UserViewModel(val database: MyDatabase) : ViewModel() {
 
-    fun registerUser(userName: String, password: String, role: String) = viewModelScope.launch {
-        val user = UserEntity(userName = userName, password = password, role = role)
-        database.userDao.addUser(user)
+    fun registerUser(
+        userName: String,
+        password: String,
+        role: String = "user",
+        onResult: (Boolean?) -> Unit
+    ) = viewModelScope.launch {
+        val isUser = database.userDao.getUserByUserName(userName)
+        if (isUser == null){
+            val user = UserEntity(
+                userName = userName,
+                password = password,
+                role = role
+            )
+            database.userDao.addUser(user)
+            onResult(true)
+        } else{
+            onResult(false)
+        }
     }
 
-    fun loginUser(username: String, password: String, onResult: (UserEntity?) -> Unit) = viewModelScope.launch {
+    fun loginUser(
+        username: String,
+        password: String,
+        onResult: (UserEntity?) -> Unit
+    ) = viewModelScope.launch {
         val user = database.userDao.getUser(username, password)
         onResult(user) // Возвращаем результат в главный поток
     }
