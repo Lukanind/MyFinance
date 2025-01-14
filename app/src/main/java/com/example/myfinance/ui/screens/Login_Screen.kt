@@ -28,17 +28,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.myfinance.ui.theme.Purple40
+import com.example.myfinance.viewmodels.AuthViewModel
 import com.example.myfinance.viewmodels.UserViewModel
 
 @Composable
 fun LoginScreen(
     viewModel: UserViewModel = viewModel(factory = UserViewModel.factory),
     navController: NavHostController,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    authViewModel: AuthViewModel
 ) {
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var loginSuccess by remember { mutableStateOf<Boolean?>(null) }
 
     val context = LocalContext.current
 
@@ -83,6 +84,12 @@ fun LoginScreen(
                 } else {
                     viewModel.loginUser(userName, password) { user ->
                         if (user != null){
+                            authViewModel.userName = userName
+                            if (user.role == "admin"){
+                                authViewModel.isAdmin = true
+                            } else {
+                                authViewModel.isAdmin = false
+                            }
                             onLoginSuccess()
                         } else {
                             Toast.makeText(context, "Пользователь не найден", Toast.LENGTH_SHORT).show()

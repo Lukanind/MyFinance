@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,13 +27,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -79,10 +79,8 @@ fun AuthNavHost(navController: NavHostController, authViewModel: AuthViewModel) 
                 navController = navController,
                 onLoginSuccess = {
                     authViewModel.isAuthenticated = true
-//                    navController.navigate(Screens.Main.screen) {
-//                        popUpTo(Screens.Login.screen) { inclusive = true }
-//                    }
-                }
+                },
+                authViewModel = authViewModel
             )
         }
         composable(Screens.Register.screen) {
@@ -116,8 +114,11 @@ fun MyNavigationDrawer(
         gesturesEnabled = true,
         drawerContent = {
             ModalDrawerSheet {
-                Box(modifier = Modifier.fillMaxWidth().height(30.dp)){
-                    Text(text = "What the wonderful menu")
+                Box(modifier = Modifier.fillMaxWidth().height(40.dp)){
+                    Text(
+                        text = "Привет, ${authViewModel.userName}!",
+                        fontSize = 18.sp
+                    )
                 }
                 HorizontalDivider()
                 NavigationDrawerItem(label = { Text(text = "Главная", color = Purple40 ) },
@@ -138,7 +139,13 @@ fun MyNavigationDrawer(
                     })
                 NavigationDrawerItem(label = { Text(text = "Статистика", color = Purple40 ) },
                     selected = false,
-                    icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Statistic", tint = Purple40) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Statistic",
+                            tint = Purple40
+                        )
+                    },
                     onClick = {
                         coroutineScope.launch {
                             drawerState.close()
@@ -147,18 +154,27 @@ fun MyNavigationDrawer(
                             popUpTo(0)
                         }
                     })
-                HorizontalDivider()
-                NavigationDrawerItem(label = { Text(text = "Добавить Категорию", color = Purple40 ) },
-                    selected = false,
-                    icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Category", tint = Purple40) },
-                    onClick = {
-                        coroutineScope.launch {
-                            drawerState.close()
+                if (authViewModel.isAdmin){
+                    HorizontalDivider()
+                    NavigationDrawerItem(label = { Text(text = "Добавить Категорию", color = Purple40 ) },
+                        selected = false,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Create,
+                                contentDescription = "Category",
+                                tint = Purple40
+                            )
+                        },
+                        onClick = {
+                            coroutineScope.launch {
+                                drawerState.close()
+                            }
+                            navigationController.navigate(Screens.AddCategory.screen){
+                                //popUpTo(0)
+                            }
                         }
-                        navigationController.navigate(Screens.AddCategory.screen){
-                            //popUpTo(0)
-                        }
-                    })
+                    )
+                }
             }
         }
     ) {

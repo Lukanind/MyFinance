@@ -8,4 +8,5 @@ import androidx.lifecycle.ViewModel
 class AuthViewModel : ViewModel() {
     var isAuthenticated by mutableStateOf(false)
     var isAdmin by mutableStateOf(false)
+    var userName by mutableStateOf("")
 }

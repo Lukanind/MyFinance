@@ -3,13 +3,17 @@ package com.example.myfinance.ui.screens
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -41,6 +45,7 @@ fun RegistrationScreen(
     var registrationSuccess by remember { mutableStateOf<Boolean?>(null) }
 
     val context = LocalContext.current
+    var isAdmin by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -75,6 +80,30 @@ fun RegistrationScreen(
                 .fillMaxWidth(),
             singleLine = true
         )
+        Row(
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                "Админ?",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(18.dp)
+            )
+            Switch(
+                checked = isAdmin,
+                onCheckedChange = {
+                    isAdmin = it
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.Green,
+                    uncheckedThumbColor = Color.Red,
+                    checkedTrackColor = Color.White,
+                    uncheckedTrackColor = Color.LightGray
+                )
+            )
+        }
         Spacer(modifier = Modifier.padding(40.dp))
         Button(
             onClick = {
@@ -82,8 +111,14 @@ fun RegistrationScreen(
                     Toast.makeText(context, "Ошибка! Заполните поля!", Toast.LENGTH_SHORT).show()
                 } else {
                     try {
-                        viewModel.registerUser(userName, password) { success ->
-                            registrationSuccess = success
+                        if (isAdmin){
+                            viewModel.registerUser(userName, password, "admin") { success ->
+                                registrationSuccess = success
+                            }
+                        } else {
+                            viewModel.registerUser(userName, password) { success ->
+                                registrationSuccess = success
+                            }
                         }
                         if (registrationSuccess == true){
                             onRegisterSuccess()
