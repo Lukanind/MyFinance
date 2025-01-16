@@ -1,5 +1,6 @@
 package com.example.myfinance.ui.screens
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -32,17 +33,26 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.myfinance.ui.theme.Purple40
+import com.example.myfinance.viewmodels.AuthViewModel
 import com.example.myfinance.viewmodels.UserViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 @Composable
 fun RegistrationScreen(
     viewModel: UserViewModel = viewModel(factory = UserViewModel.factory),
     navController: NavHostController,
-    onRegisterSuccess: () -> Unit
+    onRegisterSuccess: () -> Unit,
+    authViewModel: AuthViewModel
 ) {
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var registrationSuccess by remember { mutableStateOf<Boolean?>(null) }
+    var passwordError by remember { mutableStateOf("") }
+
+    var email by remember { mutableStateOf("") }
+    val auth = Firebase.auth
 
     val context = LocalContext.current
     var isAdmin by remember { mutableStateOf(false) }
@@ -71,8 +81,20 @@ fun RegistrationScreen(
             singleLine = true
         )
         TextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email...") },
+            modifier = Modifier
+                .padding(18.dp)
+                .fillMaxWidth(),
+            singleLine = true
+        )
+        TextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                passwordError = authViewModel.validatePassword(password)
+            },
             label = { Text("Пароль...") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
@@ -80,54 +102,77 @@ fun RegistrationScreen(
                 .fillMaxWidth(),
             singleLine = true
         )
-        Row(
-            horizontalArrangement = Arrangement.Center
-        ) {
+        if (passwordError.isNotEmpty()){
             Text(
-                "Админ?",
-                fontSize = 20.sp,
+                passwordError,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = Color.Red,
                 modifier = Modifier
-                    .padding(18.dp)
-            )
-            Switch(
-                checked = isAdmin,
-                onCheckedChange = {
-                    isAdmin = it
-                },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.Green,
-                    uncheckedThumbColor = Color.Red,
-                    checkedTrackColor = Color.White,
-                    uncheckedTrackColor = Color.LightGray
-                )
+                    .padding(5.dp)
             )
         }
+//        Row(
+//            horizontalArrangement = Arrangement.Center
+//        ) {
+//            Text(
+//                "Админ?",
+//                fontSize = 20.sp,
+//                fontWeight = FontWeight.Bold,
+//                color = Color.White,
+//                modifier = Modifier
+//                    .padding(18.dp)
+//            )
+//            Switch(
+//                checked = isAdmin,
+//                onCheckedChange = {
+//                    isAdmin = it
+//                },
+//                colors = SwitchDefaults.colors(
+//                    checkedThumbColor = Color.Green,
+//                    uncheckedThumbColor = Color.Red,
+//                    checkedTrackColor = Color.White,
+//                    uncheckedTrackColor = Color.LightGray
+//                )
+//            )
+//        }
         Spacer(modifier = Modifier.padding(40.dp))
         Button(
             onClick = {
-                if (userName.isEmpty() || password.isEmpty()){
+                if (userName.isEmpty() || password.isEmpty() || email.isEmpty()){
                     Toast.makeText(context, "Ошибка! Заполните поля!", Toast.LENGTH_SHORT).show()
                 } else {
-                    try {
-                        if (isAdmin){
-                            viewModel.registerUser(userName, password, "admin") { success ->
-                                registrationSuccess = success
+                    if (passwordError.isEmpty()){
+                        try {
+                            authViewModel.signUp(auth, email, password, context) { success ->
+                                if (success == true) {
+                                    viewModel.registerUser(userName, password, email = email) { success ->
+                                        if (success == true) {
+                                            onRegisterSuccess()
+                                        } else {
+                                            Toast.makeText(context, "Возможно такой пользователь уже существует!", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
                             }
-                        } else {
-                            viewModel.registerUser(userName, password) { success ->
-                                registrationSuccess = success
-                            }
+//                            if (isAdmin){
+//                            viewModel.registerUser(userName, password, "admin", email) { success ->
+//                                registrationSuccess = success
+//                            }
+//
+//                            } else {
+//                            viewModel.registerUser(userName, password, email = email) { success ->
+//                                registrationSuccess = success
+//                            }
+//                            }
+//                            if (registrationSuccess == true){
+//                                onRegisterSuccess()
+//                            } else {
+//                                Toast.makeText(context, "Возможно такой пользователь уже существует!", Toast.LENGTH_SHORT).show()
+//                            }
+                        } catch (ex: Exception){
+                            Toast.makeText(context, ex.localizedMessage, Toast.LENGTH_SHORT).show()
+                            Log.d("Register", ex.localizedMessage)
                         }
-                        if (registrationSuccess == true){
-                            onRegisterSuccess()
-                        } else {
-                            Toast.makeText(context, "Такой пользователь уже существует!", Toast.LENGTH_SHORT).show()
-                        }
-                    } catch (ex: Exception){
-                        Toast.makeText(context, ex.localizedMessage, Toast.LENGTH_SHORT).show()
-                        Log.d("Register", ex.localizedMessage)
                     }
                 }
             },

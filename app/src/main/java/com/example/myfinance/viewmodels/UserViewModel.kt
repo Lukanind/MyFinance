@@ -1,5 +1,6 @@
 package com.example.myfinance.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -16,6 +17,7 @@ class UserViewModel(val database: MyDatabase) : ViewModel() {
         userName: String,
         password: String,
         role: String = "user",
+        email: String,
         onResult: (Boolean?) -> Unit
     ) = viewModelScope.launch {
         val isUser = database.userDao.getUserByUserName(userName)
@@ -23,21 +25,24 @@ class UserViewModel(val database: MyDatabase) : ViewModel() {
             val user = UserEntity(
                 userName = userName,
                 password = password,
-                role = role
+                role = role,
+                email = email
             )
             database.userDao.addUser(user)
             onResult(true)
+            Log.d("registerUser", "onReasult: true")
         } else{
             onResult(false)
+            Log.d("registerUser", "onReasult: true")
         }
     }
 
     fun loginUser(
-        username: String,
+        email: String,
         password: String,
         onResult: (UserEntity?) -> Unit
     ) = viewModelScope.launch {
-        val user = database.userDao.getUser(username, password)
+        val user = database.userDao.getUser(email, password)
         onResult(user) // Возвращаем результат в главный поток
     }
 

@@ -1,6 +1,8 @@
 package com.example.myfinance
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,23 +49,21 @@ import com.example.myfinance.ui.screens.StatisticScreen
 import com.example.myfinance.ui.theme.Purple40
 import com.example.myfinance.viewmodels.AuthViewModel
 import com.example.myfinance.viewmodels.TitleViewModel
+import com.google.android.gms.safetynet.SafetyNet
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.launch
 
 @Composable
 fun MyNavigation() {
-    val authViewModel = remember { AuthViewModel() } // Создаем ViewModel для аутентификации
-    //val isAuthenticated by remember { mutableStateOf(authViewModel.isAuthenticated) }
-
+    val authViewModel = remember { AuthViewModel() }
     val titleViewModel = remember { TitleViewModel() }
 
-    // Используем remember для хранения состояния навигации
     val navigationController = rememberNavController()
 
     if (authViewModel.isAuthenticated) {
-        // Отображаем основной интерфейс с ModalNavigationDrawer
         MyNavigationDrawer(navigationController, authViewModel, titleViewModel)
     } else {
-        // Отображаем экран логина или регистрации
         AuthNavHost(navigationController, authViewModel)
     }
 }
@@ -87,11 +87,11 @@ fun AuthNavHost(navController: NavHostController, authViewModel: AuthViewModel) 
             RegistrationScreen(
                 navController = navController,
                 onRegisterSuccess = {
-                    //authViewModel.isAuthenticated = true
                     navController.navigate(Screens.Login.screen) {
                         popUpTo(Screens.Register.screen) { inclusive = true }
                     }
-                }
+                },
+                authViewModel = authViewModel
             )
         }
     }
@@ -151,7 +151,7 @@ fun MyNavigationDrawer(
                             drawerState.close()
                         }
                         navigationController.navigate(Screens.Statistic.screen){
-                            popUpTo(0)
+                            //popUpTo(0)
                         }
                     })
                 if (authViewModel.isAdmin){
@@ -254,3 +254,6 @@ fun MyNavigationDrawer(
         }
     }
 }
+
+
+

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     kotlin("kapt")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -42,7 +43,9 @@ android {
 }
 
 dependencies {
+    implementation (platform("com.google.firebase:firebase-bom:33.1.2"))
 
+    implementation(libs.firebase.auth)
     val roomVersion = "2.6.0"
 
     implementation(libs.androidx.core.ktx)
@@ -69,4 +72,8 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation ("androidx.navigation:navigation-compose:2.8.5")
+
+    implementation ("com.google.android.gms:play-services-safetynet:18.1.0")
+        //implementation ("com.google.firebase:firebase-auth:latest_version")
+
 }

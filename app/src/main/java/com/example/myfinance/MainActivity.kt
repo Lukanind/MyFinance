@@ -19,6 +19,9 @@ import com.example.myfinance.ui.theme.MyFinanceTheme
 import com.example.myfinance.viewmodels.OperationViewModel
 import com.example.myfinance.viewmodels.TitleViewModel
 import com.example.myfinance.viewmodels.UserViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
     val titleViewModel: TitleViewModel by viewModels()

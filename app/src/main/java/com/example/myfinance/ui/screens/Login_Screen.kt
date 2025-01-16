@@ -41,6 +41,8 @@ fun LoginScreen(
     var userName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    var email by remember { mutableStateOf("") }
+
     val context = LocalContext.current
 
     Column(
@@ -57,10 +59,19 @@ fun LoginScreen(
                 .padding(30.dp)
                 .align(Alignment.CenterHorizontally)
         )
+//        TextField(
+//            value = userName,
+//            onValueChange = { userName = it },
+//            label = { Text("Имя пользователя...") },
+//            modifier = Modifier
+//                .padding(18.dp)
+//                .fillMaxWidth(),
+//            singleLine = true
+//        )
         TextField(
-            value = userName,
-            onValueChange = { userName = it },
-            label = { Text("Имя пользователя...") },
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email...") },
             modifier = Modifier
                 .padding(18.dp)
                 .fillMaxWidth(),
@@ -79,24 +90,27 @@ fun LoginScreen(
         Spacer(modifier = Modifier.padding(40.dp))
         Button(
             onClick = {
-                if (userName.isEmpty() || password.isEmpty()){
+                if (email.isEmpty() || password.isEmpty()){
                     Toast.makeText(context, "Ошибка! Заполните поля!", Toast.LENGTH_SHORT).show()
                 } else {
-                    viewModel.loginUser(userName, password) { user ->
-                        if (user != null){
-                            authViewModel.userName = userName
-                            if (user.role == "admin"){
-                                authViewModel.isAdmin = true
-                            } else {
-                                authViewModel.isAdmin = false
+                    authViewModel.loginAndCheck(email, password, context) { success ->
+                        if (success == true) {
+                            viewModel.loginUser(email, password) { user ->
+                                if (user != null){
+                                    authViewModel.userName = user.userName
+                                    if (user.role == "admin"){
+                                        authViewModel.isAdmin = true
+                                    } else {
+                                        authViewModel.isAdmin = false
+                                    }
+                                    onLoginSuccess()
+                                } else {
+                                    Toast.makeText(context, "Пользователь не найден", Toast.LENGTH_SHORT).show()
+                                }
                             }
-                            onLoginSuccess()
-                        } else {
-                            Toast.makeText(context, "Пользователь не найден", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
-
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Purple40,
